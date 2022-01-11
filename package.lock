@@ -1,0 +1,5 @@
+prefixes:
+  cellular: cellular
+packages:
+  cellular:
+    path: ../cellular
