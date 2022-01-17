@@ -14,6 +14,7 @@ import serial.ports.uart as uart
 import xmodem_1k
 import experimental.exceptions show *
 
+import gnss_location show *
 import cellular show *
 import cellular.base show *
 

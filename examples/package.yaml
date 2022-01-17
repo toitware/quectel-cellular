@@ -1,0 +1,9 @@
+dependencies:
+  cellular:
+    url: github.com/toitware/cellular
+    version: ^1.0.0
+  http:
+    url: github.com/toitlang/pkg-http
+    version: ^1.5.0
+  quectel_cellular:
+    path: ..
