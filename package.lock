@@ -1,0 +1,20 @@
+prefixes:
+  cellular: cellular
+  gnss_location: toit-gnss-location
+packages:
+  cellular:
+    url: github.com/toitware/cellular
+    version: 1.0.0
+    hash: 0fdbcd9cc5a0a96eac12ab634881bea5ef12114f
+    prefixes:
+      gnss_location: toit-gnss-location
+  toit-gnss-location:
+    url: github.com/toitware/toit-gnss-location
+    version: 1.0.2
+    hash: e9457f50c5260f9451e823a39d435e3655125bb0
+    prefixes:
+      location: toit-location
+  toit-location:
+    url: github.com/toitware/toit-location
+    version: 1.0.0
+    hash: 080665c10587c1ef82e26b993dda7fa560cf2075
