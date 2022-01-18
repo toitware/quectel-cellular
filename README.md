@@ -1,1 +1,2 @@
-# quectel-cellular
+# Quectel cellular
+Drivers for quectel modems.
