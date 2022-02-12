@@ -15,6 +15,7 @@ import xmodem_1k
 import experimental.exceptions show *
 
 import gnss_location show *
+import location show *
 import cellular show *
 import cellular.base show *
 
@@ -493,14 +494,17 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
   gnss_location -> GnssLocation?:
     at_.do: | session/at.Session |
       catch --unwind=(: not it.contains "Not fixed now"):
-        loc := (session.set "+QGPSLOC" [2]).last
+        response := (session.set "+QGPSLOC" [2]).last
+        latitude/float := response[1]
+        longitude/float := response[2]
+        horizontal_accuracy/float := response[3]
+        altitude/float := response[4]
         return GnssLocation
-          loc[1]
-          loc[2]
-          loc[3]
-          loc[3]
-          loc[4]
-
+            Location latitude longitude
+            altitude
+            Time.now
+            horizontal_accuracy
+            1.0  // vertical_accuracy
       return null
     unreachable
 

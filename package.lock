@@ -1,6 +1,7 @@
 prefixes:
   cellular: cellular
   gnss_location: toit-gnss-location
+  location: toit-location
 packages:
   cellular:
     url: github.com/toitware/cellular
