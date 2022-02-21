@@ -445,11 +445,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
           continue
 
         configure_psm_ session --enable=use_psm
-
-        // The modem sometimes enter PSM unexpectedly. If a connection is
-        // already established, then we need to restart to reestablish the
-        // connection.
-        session.register_urc "+QPSMTIMER":: throw "unexpected PSM enter"
+        set_up_psm_urc_handler_
 
         break
 
@@ -466,6 +462,17 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     // Set mask for both m1 and nbiot.
     hex_mask:= mask.stringify 16
     session.action "+QCFG=\"band\",0,$hex_mask,$hex_mask"
+
+  set_up_psm_urc_handler_:
+    // The modem sometimes enter PSM unexpectedly. If a connection is
+    // already established, then we need to restart to reestablish the
+    // connection.
+    at_.do: | session/at.Session |
+      session.register_urc "+QPSMTIMER":: throw "unexpected PSM enter"
+
+  connect_psm:
+    set_up_psm_urc_handler_
+    super
 
   network_interface -> net.Interface:
     return Interface_ this
