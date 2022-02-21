@@ -446,8 +446,6 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         configure_psm_ session --enable=use_psm
 
-        session.register_urc "+QPSMTIMER":: throw "unexpected URC enter"
-
         break
 
   configure_psm_ session/at.Session --enable/bool --periodic_tau/string="00000001":
@@ -514,8 +512,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     at_.do: | session/at.Session |
       state := (session.read "+QGPS").last
       if state[0] == 1:
-        session.send_non_check
-          at.Command.action "+QGPSEND" --timeout=(Duration --ms=500)
+        session.action "+QGPSEND"
 
 class QuectelConstants implements Constants:
   RatCatM1 -> int: return 8
