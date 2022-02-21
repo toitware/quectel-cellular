@@ -446,6 +446,11 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         configure_psm_ session --enable=use_psm
 
+        // The modem sometimes enter PSM unexpectedly. If a connection is
+        // already established, then we need to restart to reestablish the
+        // connection.
+        session.register_urc "+QPSMTIMER":: throw "unexpected PSM enter"
+
         break
 
   configure_psm_ session/at.Session --enable/bool --periodic_tau/string="00000001":
