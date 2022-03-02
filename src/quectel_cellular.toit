@@ -453,7 +453,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     psm_target := enable ? 1 : 0
     value := session.read "+CPSMS"
 
-    if value.single[0] == psm_target: return
+    if value.last[0] == psm_target: return
 
     parameters := enable ? [psm_target, null, null, periodic_tau, "00000000"] : [psm_target]
     session.set "+CPSMS" parameters
