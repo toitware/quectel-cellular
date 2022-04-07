@@ -409,13 +409,10 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
   configure apn --bands=null --rats=null:
     at_.do: | session/at.Session |
       // Set connection arguments.
-      should_reboot := false
+
       while true:
-        if should_reboot: wait_for_ready_ session
-
+        should_reboot := false
         enter_configuration_mode_ session
-
-        should_reboot = false
 
         // LTE only.
         session.set "+QCFG" ["nwscanmode", rats_to_scan_mode_ rats]
@@ -438,6 +435,8 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         if (get_apn_ session) != apn:
           set_apn_ session apn
+          // TODO(kasper): It is unclera why we need to reboot here. The +CGDCONT
+          // description in the Quectel manuals do not indicate that we should.
           should_reboot = true
 
         if should_reboot:
@@ -488,6 +487,10 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
   reboot_ session/at.Session:
     on_reset session
+    // Rebooting the module should get it back into a ready state. We avoid
+    // calling $wait_for_ready_ because it flips the power on, which is too
+    // heavy an operation.
+    5.repeat: if select_baud_ session: return
     wait_for_ready_ session
 
   set_baud_rate_ session/at.Session baud_rate:
@@ -495,7 +498,6 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     session.action "+IPR=$baud_rate;&W"
     uart_.set_baud_rate baud_rate
     sleep --ms=100
-    wait_for_ready_ session
 
   gnss_start:
     at_.do: | session/at.Session |
