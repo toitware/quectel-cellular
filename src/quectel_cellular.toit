@@ -360,14 +360,18 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
   close:
     try:
-      sockets_.values.do:
-        it.closed_
-      at_.do: | session/at.Session |
-        if not session.is_closed:
-          if use_psm and not failed_to_connect and not is_lte_connection_:
-            session.set "+QCFG" ["psm/enter", 1]
-          else:
-            session.send QPOWD
+      sockets_.values.do: it.closed_
+      2.repeat: | attempt/int |
+        catch: with_timeout --ms=1_500: at_.do: | session/at.Session |
+          if not session.is_closed:
+            if use_psm and not failed_to_connect and not is_lte_connection_:
+              session.set "+QCFG" ["psm/enter", 1]
+            else:
+              session.send QPOWD
+          return
+        // If the chip was recently rebooted, wait for it to be responsive before
+        // communicating with it again. Only do this once.
+        if attempt == 0: wait_for_ready
     finally:
       at_session_.close
       uart_.close
