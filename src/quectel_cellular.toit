@@ -470,7 +470,10 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     // The modem sometimes enters PSM unexpectedly. If a connection is
     // already established, then we need to restart to reestablish the
     // connection.
-    session.register_urc "+QPSMTIMER":: throw "unexpected PSM enter"
+    lambda := :: throw "unexpected PSM enter"
+    // We sometimes end up registering the +QPSMTIMER URC handler more
+    // than once. Don't turn that into a problem.
+    catch: session.register_urc "+QPSMTIMER" lambda
 
   connect_psm:
     at_.do: | session/at.Session |
