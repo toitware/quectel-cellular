@@ -512,9 +512,10 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     at_.do: gnss_eval_ it
 
   gnss_location -> GnssLocation?:
-    if gnss_users_ == 0: return null
     at_.do: | session/at.Session |
-      catch --unwind=(: not it.contains "Not fixed now"):
+      gnss_eval_ session
+      if gnss_users_ == 0: return null
+      catch --unwind=(: it != at.COMMAND_TIMEOUT_ERROR and not it.contains "Not fixed now"):
         response := (session.set "+QGPSLOC" [2]).last
         latitude/float := response[1]
         longitude/float := response[2]
@@ -526,7 +527,6 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
             Time.now
             horizontal_accuracy
             1.0  // vertical_accuracy
-      gnss_eval_ session
       return null
     unreachable
 
