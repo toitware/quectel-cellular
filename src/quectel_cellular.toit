@@ -453,9 +453,6 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
         set_up_psm_urc_handler_ session
         break
 
-    // Set up GNSS if necessary.
-    gnss_eval_
-
   configure_psm_ session/at.Session --enable/bool --periodic_tau/string="00111111":
     psm_target := enable ? 1 : 0
     value := session.read "+CPSMS"
@@ -512,7 +509,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
   gnss_start:
     gnss_users_++
-    gnss_eval_
+    at_.do: gnss_eval_ it
 
   gnss_location -> GnssLocation?:
     if gnss_users_ == 0: return null
@@ -529,22 +526,22 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
             Time.now
             horizontal_accuracy
             1.0  // vertical_accuracy
+      gnss_eval_ session
       return null
     unreachable
 
   gnss_stop:
     gnss_users_--
-    gnss_eval_
+    at_.do: gnss_eval_ it
 
-  gnss_eval_ -> none:
-    at_.do: | session/at.Session |
-      state/int? ::= gnss_state_ session
-      if not state: return
-      if gnss_users_ > 0:
-        if state != 1:
-          session.set "+QGPS" [1]
-      else if state != 0:
-        session.action "+QGPSEND"
+  gnss_eval_ session/at.Session -> none:
+   state/int? ::= gnss_state_ session
+    if not state: return
+    if gnss_users_ > 0:
+      if state != 1:
+        session.set "+QGPS" [1]
+    else if state != 0:
+      session.action "+QGPSEND"
 
   gnss_state_ session/at.Session -> int?:
     3.repeat:
