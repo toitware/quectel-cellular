@@ -535,7 +535,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     at_.do: gnss_eval_ it
 
   gnss_eval_ session/at.Session -> none:
-   state/int? ::= gnss_state_ session
+    state/int? ::= gnss_state_ session
     if not state: return
     if gnss_users_ > 0:
       if state != 1:
