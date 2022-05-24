@@ -451,9 +451,10 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         configure_psm_ session --enable=use_psm
         set_up_psm_urc_handler_ session
-        gnss_eval_
-
         break
+
+    // Set up GNSS if necessary.
+    gnss_eval_
 
   configure_psm_ session/at.Session --enable/bool --periodic_tau/string="00111111":
     psm_target := enable ? 1 : 0
