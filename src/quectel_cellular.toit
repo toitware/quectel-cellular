@@ -269,6 +269,8 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
   resolve_/monitor.Latch? := null
 
+  gnss_users_ := 0
+
   /**
   Called when the driver should reset.
   */
@@ -439,7 +441,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         if (get_apn_ session) != apn:
           set_apn_ session apn
-          // TODO(kasper): It is unclera why we need to reboot here. The +CGDCONT
+          // TODO(kasper): It is unclear why we need to reboot here. The +CGDCONT
           // description in the Quectel manuals do not indicate that we should.
           should_reboot = true
 
@@ -449,6 +451,7 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
         configure_psm_ session --enable=use_psm
         set_up_psm_urc_handler_ session
+        gnss_eval_
 
         break
 
@@ -507,12 +510,11 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     sleep --ms=100
 
   gnss_start:
-    at_.do: | session/at.Session |
-      state := (session.read "+QGPS").last
-      if state[0] == 0:
-        session.set "+QGPS" [1]
+    gnss_users_++
+    gnss_eval_
 
   gnss_location -> GnssLocation?:
+    if gnss_users_ == 0: return null
     at_.do: | session/at.Session |
       catch --unwind=(: not it.contains "Not fixed now"):
         response := (session.set "+QGPSLOC" [2]).last
@@ -530,9 +532,18 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
     unreachable
 
   gnss_stop:
+    gnss_users_--
+    gnss_eval_
+
+  gnss_eval_ -> none:
     at_.do: | session/at.Session |
-      state := (session.read "+QGPS").last
-      if state[0] == 1:
+      state/List? := null
+      catch --trace: state = (session.read "+QGPS").last
+      if not state: return
+      if gnss_users_ > 0:
+        if state[0] == 0:
+          session.set "+QGPS" [1]
+      else if state[0] == 1:
         session.action "+QGPSEND"
 
 class QuectelConstants implements Constants:
