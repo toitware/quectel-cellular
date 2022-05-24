@@ -538,14 +538,24 @@ abstract class QuectelCellular extends CellularBase implements Gnss:
 
   gnss_eval_ -> none:
     at_.do: | session/at.Session |
-      state/List? := null
-      catch --trace: state = (session.read "+QGPS").last
+      state/int? ::= gnss_state_ session
       if not state: return
       if gnss_users_ > 0:
-        if state[0] == 0:
+        if state != 1:
           session.set "+QGPS" [1]
-      else if state[0] == 1:
+      else if state != 0:
         session.action "+QGPSEND"
+
+  gnss_state_ session/at.Session -> int?:
+    3.repeat:
+      catch:
+        state := (session.read "+QGPS").last
+        return state[0]
+      // We sometimes see the QGPS read time out, so we try to
+      // work around that by trying more than once. We make sure
+      // we can read from the UART by caling $select_baud_.
+      select_baud_ session
+    return null
 
 class QuectelConstants implements Constants:
   RatCatM1 -> int: return 8
