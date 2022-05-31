@@ -34,19 +34,22 @@ class BG96 extends QuectelCellular:
     session.set "+CFUN" [1, 1]
 
   power_on -> none:
-    if pwrkey:
+    if not pwrkey: return
+    critical_do --no-respect_deadline:
       pwrkey.set 1
       sleep --ms=150
       pwrkey.set 0
 
   power_off -> none:
-    if pwrkey:
+    if not pwrkey: return
+    critical_do --no-respect_deadline:
       pwrkey.set 1
       sleep --ms=650
       pwrkey.set 0
 
   reset -> none:
-    if rstkey:
+    if not rstkey: return
+    critical_do --no-respect_deadline:
       rstkey.set 1
       sleep --ms=150
       rstkey.set 0
