@@ -8,16 +8,17 @@ packages:
     prefixes:
       cellular: cellular
       gnss_location: toit-gnss-location
+      location: toit-location
   cellular:
     url: github.com/toitware/cellular
-    version: 1.0.0
-    hash: 0fdbcd9cc5a0a96eac12ab634881bea5ef12114f
+    version: 1.1.1
+    hash: b342dd62202c6291bbbdba45a26fb5779d16a0d3
     prefixes:
       gnss_location: toit-gnss-location
   pkg-http:
     url: github.com/toitlang/pkg-http
-    version: 1.5.0
-    hash: 538c761a0f01d532ab9982a3f8f996e552311f4b
+    version: 1.8.1
+    hash: 8cedb36badde5c91a3ed38b9d0c2aaa1fc939524
   toit-gnss-location:
     url: github.com/toitware/toit-gnss-location
     version: 1.0.2
