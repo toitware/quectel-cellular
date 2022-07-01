@@ -8,8 +8,18 @@ import gpio
 import log
 import uart
 
-
 import .quectel_cellular
+
+import cellular
+import cellular.base show *
+import cellular.service show CellularServiceDefinition
+
+class BG96Service extends CellularServiceDefinition:
+  constructor:
+    super "quectel/bg96" --major=0 --minor=1 --patch=0
+
+  create_driver --port/uart.Port --power/gpio.Pin --reset/gpio.Pin -> cellular.Cellular:
+    return BG96 port --pwrkey=power --rstkey=reset --is_always_online=true
 
 /**
 Driver for BG96, LTE-M modem.

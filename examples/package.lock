@@ -1,7 +1,7 @@
 prefixes:
   cellular: cellular
   http: pkg-http
-  quectel_cellular: ..
+  quectel: ..
 packages:
   ..:
     path: ..
@@ -11,14 +11,14 @@ packages:
       location: toit-location
   cellular:
     url: github.com/toitware/cellular
-    version: 1.1.1
-    hash: b342dd62202c6291bbbdba45a26fb5779d16a0d3
+    version: 1.2.0
+    hash: 98f3b72863839c1737aa13db5e6437b9a16944b6
     prefixes:
       gnss_location: toit-gnss-location
   pkg-http:
     url: github.com/toitlang/pkg-http
-    version: 1.8.1
-    hash: 8cedb36badde5c91a3ed38b9d0c2aaa1fc939524
+    version: 1.9.0
+    hash: 760f6c93e5b267e04fb687888dce159cc4050be2
   toit-gnss-location:
     url: github.com/toitware/toit-gnss-location
     version: 1.0.2
