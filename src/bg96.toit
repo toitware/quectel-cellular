@@ -25,7 +25,11 @@ class BG96Service extends CellularServiceDefinition:
     super "quectel/bg96" --major=0 --minor=1 --patch=0
 
   create_driver --port/uart.Port --power/gpio.Pin? --reset/gpio.Pin? -> cellular.Cellular:
-    return BG96 port --pwrkey=power --rstkey=reset --is_always_online=true
+    return BG96 port
+        --logger=create_logger
+        --pwrkey=power
+        --rstkey=reset
+        --is_always_online=true
 
 /**
 Driver for BG96, LTE-M modem.
@@ -35,11 +39,10 @@ class BG96 extends QuectelCellular:
   rstkey/gpio.Pin?
 
   constructor uart/uart.Port --logger=log.default --.pwrkey=null --.rstkey=null --is_always_online/bool:
-    super
-      uart
-      --logger=logger
-      --preferred_baud_rate=921600
-      --use_psm=not is_always_online
+    super uart
+        --logger=logger
+        --preferred_baud_rate=921600
+        --use_psm=not is_always_online
 
   on_connected_ session/at.Session:
     // Attach to network.
