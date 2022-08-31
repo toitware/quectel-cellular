@@ -1,6 +1,9 @@
 # Quectel cellular
 Drivers for quectel modems.
 
+This repository contains drivers for the following modems:
+- BG96
+
 ## Using the driver as a service
 The easiest way to use the module is to install it in a separate container 
 and let it provide its network implementation as a service.
