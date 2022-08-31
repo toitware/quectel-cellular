@@ -10,24 +10,10 @@ The example resets the modem before connecting to remove any unexpected state
   before connecting. However, this makes the connection time fairly long.
 */
 
-import monitor
 import http
 import net.cellular
 
-import quectel.bg96 show BG96Service
-
 main:
-  spawn::
-    service := BG96Service
-    service.install
-    // Keep the spawned process alive by blocking on a
-    // latch that never gets a value.
-    (monitor.Latch).get
-
-  // TODO(kasper): It is error prone to have to sleep
-  // until the service has been installed.
-  sleep --ms=1_000
-
   config ::= {
     cellular.CONFIG_APN: "onomondo",
     cellular.CONFIG_BANDS: [20, 8],
